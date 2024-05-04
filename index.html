@@ -15,13 +15,18 @@
             background-color: #f0f0f0;
         }
         .container {
-            max-width: 600px;
             width: 90%;
-            padding: 20px;
+            max-width: 600px;
             background-color: #fff;
             border-radius: 5px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             overflow: hidden;
+        }
+        .scroll-container {
+            overflow: auto;
+            max-height: calc(100vh - 40px); /* Altura máxima menos los márgenes (20px arriba y 20px abajo) */
+            padding: 20px;
+            box-sizing: border-box;
         }
         h1 {
             text-align: center;
@@ -69,24 +74,24 @@
 </head>
 <body>
     <div class="container">
-        <h1>Luis f./Tool GZIP IM03</h1>
-        <input type="file" id="fileInput">
-        <button onclick="buscarSecuencias()">Buscar Secuencias</button>
-        <button onclick="copiarResultado()">Copiar Resultado</button>
-        <button onclick="enumerarResultado()">Enumerar Resultado</button>
-        <br><br>
-        <textarea id="resultadoTextarea" placeholder="Resultado"></textarea>
-        <hr>
-        <h1>Insertar Archivo</h1>
-        <label for="fileInput">Archivo a Insertar:</label>
-        <input type="file" id="insertFileInput"><br><br>
-        <label for="range">Inicio-Final (hexadecimal):</label>
-        <input type="text" id="range" pattern="[0-9a-fA-F]{1,8}-[0-9a-fA-F]{1,8}" title="Por favor, introduce un rango de inicio y final en formato hexadecimal"><br><br>
-        <button onclick="insertFile()">Insertar Archivo</button>
-        <button onclick="downloadRange()">Descargar Rango</button>
+        <div class="scroll-container">
+            <h1>Luis f./Tool GZIP IM03</h1>
+            <input type="file" id="fileInput">
+            <button onclick="buscarSecuencias()">Buscar Secuencias</button>
+            <button onclick="copiarResultado()">Copiar Resultado</button>
+            <button onclick="enumerarResultado()">Enumerar Resultado</button>
+            <br><br>
+            <textarea id="resultadoTextarea" placeholder="Resultado"></textarea>
+            <hr>
+            <h1>Insertar Archivo</h1>
+            <label for="fileInput">Archivo a Insertar:</label>
+            <input type="file" id="insertFileInput"><br><br>
+            <label for="range">Inicio-Final (hexadecimal):</label>
+            <input type="text" id="range" pattern="[0-9a-fA-F]{1,8}-[0-9a-fA-F]{1,8}" title="Por favor, introduce un rango de inicio y final en formato hexadecimal"><br><br>
+            <button onclick="insertFile()">Insertar Archivo</button>
+            <button onclick="downloadRange()">Descargar Rango</button>
+        </div>
     </div>
-
-
     
 
 
