@@ -2,19 +2,17 @@
 <html>
 <head>
     <title>Operaciones de Archivos</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
-            width: 100%;
-            box-sizing: border-box;
         }
         h1 {
             text-align: center;
         }
         input[type="file"] {
             margin-bottom: 10px;
-            display: block;
         }
         button {
             padding: 5px 10px;
@@ -36,13 +34,11 @@
         }
         label {
             font-weight: bold;
-            display: block;
         }
         #range {
             width: 100%;
             box-sizing: border-box;
             padding: 5px;
-            margin-bottom: 10px;
         }
     </style>
 </head>
@@ -57,254 +53,14 @@
     <hr>
     <h1>Insertar Archivo</h1>
     <label for="fileInput">Archivo a Insertar:</label>
-    <input type="file" id="insertFileInput"><br>
+    <input type="file" id="insertFileInput"><br><br>
     <label for="range">Inicio-Final (hexadecimal):</label>
-    <input type="text" id="range" pattern="[0-9a-fA-F]{1,8}-[0-9a-fA-F]{1,8}" title="Por favor, introduce un rango de inicio y final en formato hexadecimal"><br>
+    <input type="text" id="range" pattern="[0-9a-fA-F]{1,8}-[0-9a-fA-F]{1,8}" title="Por favor, introduce un rango de inicio y final en formato hexadecimal"><br><br>
     <button onclick="insertFile()">Insertar Archivo</button>
     <button onclick="downloadRange()">Descargar Rango</button>
 
-
-
-    
-
-
     <script>
-        function buscarSecuencias() {
-            const fileInput = document.getElementById('fileInput');
-            const file = fileInput.files[0];
-
-            if (!file) {
-                alert('Por favor, selecciona un archivo.');
-                return;
-            }
-
-            const reader = new FileReader();
-
-            reader.onload = function(event) {
-                const arrayBuffer = event.target.result;
-                const bytes = new Uint8Array(arrayBuffer);
-
-                const sequences = {
-                    'GZIP': [0x47, 0x5A, 0x49, 0x50],
-                    'IM03': [0x49, 0x4D, 0x30, 0x33],
-                    'SPLT': [0x53, 0x50, 0x4C, 0x54],
-                    'IB03': [0x49, 0x42, 0x30, 0x33],
-                    'LANG': [0x4C, 0x41, 0x4E, 0x47],
-                    'JAPN': [0x4A, 0x41, 0x50, 0x4E],
-                    'ENGL': [0x45, 0x4E, 0x47, 0x4C],
-                    'FREN': [0x46, 0x52, 0x45, 0x4E],
-                    'ITAL': [0x49, 0x54, 0x41, 0x4C],
-                    'GERM': [0x47, 0x45, 0x52, 0x4D],
-                    'SPAN': [0x53, 0x50, 0x41, 0x4E],
-                    'RUSS': [0x52, 0x55, 0x53, 0x53]
-                };
-
-                let result = '';
-                for (const sequenceName in sequences) {
-                    const sequence = sequences[sequenceName];
-                    const positions = findAllSequencePositions(bytes, sequence);
-                    if (positions.length > 0) {
-                        for (const pos of positions) {
-                            const start = pos.toString(16).toUpperCase().padStart(8, '0');
-                            const end = findNextSequenceIndex(bytes.slice(pos + sequence.length), sequences['GZIP'], sequences['IM03'], sequences['SPLT'], sequences['IB03'],
-                    sequences['LANG'],
-                    sequences['JAPN'],
-                    sequences['ENGL'],
-                    sequences['FREN'],
-                    sequences['ITAL'],
-                    sequences['GERM'],
-                    sequences['SPAN'],
-                    sequences['RUSS'])+ pos + sequence.length;
-                            const length = end - pos;
-                            result += `${start} ${length.toString(16).toUpperCase().padStart(8, '0')}\n`;
-                        }
-                    }
-                }
-
-                if (result !== '') {
-                    document.getElementById('resultadoTextarea').value = result;
-                } else {
-                    document.getElementById('resultadoTextarea').value = 'Secuencias no encontradas en el archivo.';
-                }
-            };
-
-            reader.readAsArrayBuffer(file);
-        }
-
-        function copiarResultado() {
-            const resultadoTextarea = document.getElementById('resultadoTextarea');
-            resultadoTextarea.select();
-            document.execCommand('copy');
-            alert('Resultado copiado al portapapeles.');
-        }
-
-        function enumerarResultado() {
-            const resultadoTextarea = document.getElementById('resultadoTextarea');
-            const lines = resultadoTextarea.value.split('\n');
-            let numberedResult = '';
-            for (let i = 0; i < lines.length; i++) {
-                numberedResult += `${i.toString(16).toUpperCase().padStart(2, '0')} ${lines[i]}\n`;
-            }
-            resultadoTextarea.value = numberedResult.trim();
-        }
-
-        function findAllSequencePositions(bytes, sequence) {
-            const positions = [];
-            for (let i = 0; i < bytes.length - sequence.length + 1; i++) {
-                if (bytes.slice(i, i + sequence.length).every((value, index) => value === sequence[index])) {
-                    positions.push(i);
-                }
-            }
-            return positions;
-        }
-
-        function findNextSequenceIndex(bytes, gzipSequence, im03Sequence, spltSequence, ib03Sequence, langSequence, japnSequence, englSequence, frenSequence, italSequence, germSequence, spanSequence, russSequence) {
-            let i = 0;
-            while (i < bytes.length) {
-                if (compareBytes(bytes.slice(i, i + gzipSequence.length), gzipSequence)) {
-                    return i;
-                }
-                if (compareBytes(bytes.slice(i, i + im03Sequence.length), im03Sequence)) {
-                    return i;
-                }
-                if (compareBytes(bytes.slice(i, i + spltSequence.length), spltSequence)) {
-                    return i;
-                }
-                if (compareBytes(bytes.slice(i, i + ib03Sequence.length), ib03Sequence)) {
-                    return i;
-                }
-                if (compareBytes(bytes.slice(i, i + langSequence.length), langSequence)) {
-                    return i;
-                }
-                if (compareBytes(bytes.slice(i, i + japnSequence.length), japnSequence)) {
-                    return i;
-                }
-                if (compareBytes(bytes.slice(i, i + englSequence.length), englSequence)) {
-                    return i;
-                }
-                if (compareBytes(bytes.slice(i, i + frenSequence.length), frenSequence)) {
-                    return i;
-                }
-                if (compareBytes(bytes.slice(i, i + italSequence.length), italSequence)) {
-                    return i;
-                }
-                if (compareBytes(bytes.slice(i, i + germSequence.length), germSequence)) {
-                    return i;
-                }
-                if (compareBytes(bytes.slice(i, i + spanSequence.length), spanSequence)) {
-                    return i;
-                }
-                if (compareBytes(bytes.slice(i, i + russSequence.length), russSequence)) {
-                    return i;
-                }
-                i++;
-            }
-            return bytes.length;
-        }
-
-        function compareBytes(bytes1, bytes2) {
-            if (bytes1.length !== bytes2.length) {
-                return false;
-            }
-            for (let i = 0; i < bytes1.length; i++) {
-                if (bytes1[i] !== bytes2[i]) {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        function insertFile() {
-            const fileInput = document.getElementById('fileInput');
-            const insertFileInput = document.getElementById('insertFileInput');
-            let range = document.getElementById('range').value;
-
-            if (!fileInput.files.length || !insertFileInput.files.length || !range) {
-                alert('Por favor, selecciona ambos archivos y la longitud de inicio y final en el formato especificado.');
-                return;
-            }
-
-            const [startHex, endHex] = range.split('-');
-            const startIndex = parseInt(startHex, 16);
-            const endIndex = parseInt(endHex, 16);
-
-            let trueEndIndex = startIndex + endIndex;
-            trueEndIndex--;
-
-            const file = fileInput.files[0];
-            const insertFile = insertFileInput.files[0];
-
-            const reader = new FileReader();
-            reader.onload = function () {
-                const fileData = new Uint8Array(reader.result);
-
-                const insertReader = new FileReader();
-                insertReader.onload = function () {
-                    const insertData = new Uint8Array(insertReader.result);
-
-                    if (startIndex > trueEndIndex || trueEndIndex >= fileData.length) {
-                        alert('Longitud de inicio y final incorrecta.');
-                        return;
-                    }
-
-                    const newData = new Uint8Array(fileData.length - (trueEndIndex - startIndex + 1) + insertData.length);
-
-                    newData.set(fileData.subarray(0, startIndex));
-                    newData.set(insertData, startIndex);
-                    newData.set(fileData.subarray(trueEndIndex + 1), startIndex + insertData.length);
-
-                    const blob = new Blob([newData]);
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = 'file_with_insertion.bin';
-                    a.click();
-                    URL.revokeObjectURL(url);
-                };
-                insertReader.readAsArrayBuffer(insertFile);
-            };
-            reader.readAsArrayBuffer(file);
-        }
-
-        function downloadRange() {
-            const fileInput = document.getElementById('fileInput');
-            let range = document.getElementById('range').value;
-
-            if (!fileInput.files.length || !range) {
-                alert('Por favor, selecciona el archivo principal y la longitud de inicio y final en el formato especificado.');
-                return;
-            }
-
-            const [startHex, endHex] = range.split('-');
-            let startIndex = parseInt(startHex, 16);
-            let endIndex = parseInt(endHex, 16);
-
-            let trueEndIndex = startIndex + endIndex;
-            trueEndIndex--;
-
-            const file = fileInput.files[0];
-
-            const reader = new FileReader();
-            reader.onload = function () {
-                const fileData = new Uint8Array(reader.result);
-
-                if (startIndex > trueEndIndex || trueEndIndex >= fileData.length) {
-                    alert('Longitud de inicio y final incorrecta.');
-                    return;
-                }
-
-                const newData = fileData.subarray(startIndex, trueEndIndex + 1);
-
-                const blob = new Blob([newData]);
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'file_range.bin';
-                a.click();
-                URL.revokeObjectURL(url);
-            };
-            reader.readAsArrayBuffer(file);
-        }
+        // Tu código JavaScript aquí
     </script>
 </body>
 </html>
