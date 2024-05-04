@@ -2,44 +2,23 @@
 <html>
 <head>
     <title>Operaciones de Archivos</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            background-color: #f0f0f0;
-        }
-        .container {
-            width: 90%;
-            max-width: 600px;
-            margin: auto;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            overflow: auto;
+            margin: 20px;
+            width: 100%;
+            box-sizing: border-box;
         }
         h1 {
             text-align: center;
-            margin-bottom: 10px;
         }
         input[type="file"] {
             margin-bottom: 10px;
-            width: calc(100% - 20px);
-            padding: 5px;
-            box-sizing: border-box;
+            display: block;
         }
         button {
-            display: block;
-            width: calc(50% - 5px);
             padding: 5px 10px;
-            margin: 5px 0;
+            margin-right: 10px;
             background-color: #4CAF50;
             color: white;
             border: none;
@@ -54,37 +33,37 @@
             padding: 5px;
             box-sizing: border-box;
             font-family: monospace;
-            resize: vertical;
-            margin-bottom: 10px;
         }
         label {
             font-weight: bold;
-            margin-bottom: 5px;
+            display: block;
         }
         #range {
-            width: calc(100% - 20px);
-            padding: 5px;
+            width: 100%;
             box-sizing: border-box;
+            padding: 5px;
             margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Luis f./Tool GZIP IM03</h1>
-        <input type="file" id="fileInput">
-        <button onclick="buscarSecuencias()">Buscar Secuencias</button>
-        <button onclick="copiarResultado()">Copiar Resultado</button>
-        <button onclick="enumerarResultado()">Enumerar Resultado</button>
-        <textarea id="resultadoTextarea"></textarea>
-        <h1>Insertar Archivo</h1>
-        <label for="fileInput">Archivo a Insertar:</label>
-        <input type="file" id="insertFileInput">
-        <label for="range">Inicio-Final (hexadecimal):</label>
-        <input type="text" id="range" pattern="[0-9a-fA-F]{1,8}-[0-9a-fA-F]{1,8}" title="Por favor, introduce un rango de inicio y final en formato hexadecimal">
-        <button onclick="insertFile()">Insertar Archivo</button>
-        <button onclick="downloadRange()">Descargar Rango</button>
-    </div>
+    <h1>Luis f./Tool GZIP IM03</h1>
+    <input type="file" id="fileInput">
+    <button onclick="buscarSecuencias()">Buscar Secuencias</button>
+    <button onclick="copiarResultado()">Copiar Resultado</button>
+    <button onclick="enumerarResultado()">Enumerar Resultado</button>
+    <br><br>
+    <textarea id="resultadoTextarea"></textarea>
+    <hr>
+    <h1>Insertar Archivo</h1>
+    <label for="fileInput">Archivo a Insertar:</label>
+    <input type="file" id="insertFileInput"><br>
+    <label for="range">Inicio-Final (hexadecimal):</label>
+    <input type="text" id="range" pattern="[0-9a-fA-F]{1,8}-[0-9a-fA-F]{1,8}" title="Por favor, introduce un rango de inicio y final en formato hexadecimal"><br>
+    <button onclick="insertFile()">Insertar Archivo</button>
+    <button onclick="downloadRange()">Descargar Rango</button>
+
+
 
     
 
